@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIC CRM — Voice Intelligent CRM Insight</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:    #080F1E;
+  --navy2:   #0C1528;
+  --navy3:   #0F1F3D;
+  --blue:    #1A3A8F;
+  --sky:     #2F80ED;
+  --mint:    #00C9A7;
+  --gold:    #F6AD55;
+  --purple:  #9B8BF4;
+  --red:     #E74C3C;
+  --ice:     #B8D4F0;
+  --white:   #EEF5FF;
+  --sub:     #5A7A9E;
+  --card:    #0D1B35;
+  --card2:   #101F3A;
+  --border:  #162B4D;
+  --border2: #1E3660;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  overflow: hidden;
+}
+
+/* ─── SETUP MODAL ─── */
+.setup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8,15,30,0.96);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+.setup-overlay.hidden { display: none; }
+.setup-box {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 40px 44px;
+  width: 480px;
+  max-width: 95vw;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+.setup-logo {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px;
+}
+.setup-logomark {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--sky), var(--mint));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px; color: white;
+}
+.setup-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px; letter-spacing: 2px; color: var(--white);
+}
+.setup-sub { font-size: 11px; color: var(--sub); letter-spacing: 1.5px; text-transform: uppercase; }
+.setup-desc {
+  font-size: 14px; color: var(--ice); line-height: 1.6; margin-bottom: 28px;
+}
+.setup-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--sub); margin-bottom: 8px;
+}
+.setup-input {
+  width: 100%;
+  background: var(--navy2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px; color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+.setup-input:focus { border-color: var(--sky); }
+.setup-hint { font-size: 11px; color: var(--sub); margin-bottom: 24px; }
+.setup-hint a { color: var(--sky); text-decoration: none; }
+.setup-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--sky), #1a6fd4);
+  border: none; border-radius: 8px;
+  padding: 14px; color: white;
+  font-size: 15px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.setup-btn:hover { opacity: 0.9; }
+.setup-btn:active { transform: scale(0.98); }
+
+/* ─── LAYOUT ─── */
+.app {
+  display: flex; height: 100vh;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: 220px; flex-shrink: 0;
+  background: var(--navy2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 18px 16px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 4px;
+}
+.logomark {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--sky), var(--mint));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px; color: white;
+  flex-shrink: 0;
+}
+.logo-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px; letter-spacing: 2px;
+}
+.logo-tagline {
+  font-size: 9px; color: var(--sub);
+  letter-spacing: 1px; text-transform: uppercase;
+  padding-left: 42px;
+}
+
+.sidebar-nav {
+  padding: 12px 8px;
+  flex: 1;
+  overflow-y: auto;
+}
+.nav-section-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--sub);
+  padding: 8px 8px 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px; color: var(--sub);
+  transition: all 0.15s;
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: rgba(47,128,237,0.08); color: var(--ice); }
+.nav-item.active { background: rgba(47,128,237,0.12); color: var(--sky); }
+.nav-icon { width: 16px; text-align: center; font-size: 14px; }
+.nav-count {
+  margin-left: auto;
+  background: var(--border2);
+  color: var(--sub);
+  font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 10px;
+  min-width: 20px; text-align: center;
+}
+.nav-item.active .nav-count { background: rgba(47,128,237,0.2); color: var(--sky); }
+
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+}
+.vic-status {
+  display: flex; align-items: center; gap: 8px;
+}
+.vic-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--mint);
+  animation: pulse-green 2s infinite;
+  flex-shrink: 0;
+}
+.vic-dot.thinking { background: var(--gold); animation: pulse-gold 0.8s infinite; }
+.vic-dot.listening { background: var(--red); animation: pulse-red 0.6s infinite; }
+@keyframes pulse-green { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+@keyframes pulse-gold  { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+@keyframes pulse-red   { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+.vic-status-text { font-size: 12px; color: var(--sub); }
+
+/* ─── MAIN CONTENT ─── */
+.main {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+}
+
+/* ─── VIEW PANELS ─── */
+.view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.view.active { display: flex; }
+
+/* ─── CHAT VIEW ─── */
+.chat-view {
+  display: flex; flex-direction: row; overflow: hidden;
+}
+.chat-main {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+}
+
+/* ─── VOICE SETUP BANNER ─── */
+.voice-banner {
+  display: none;
+  background: linear-gradient(135deg, rgba(47,128,237,0.12), rgba(0,201,167,0.08));
+  border-bottom: 1px solid rgba(47,128,237,0.2);
+  padding: 10px 18px;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.voice-banner.show { display: flex; }
+.voice-banner-text { font-size: 12.5px; color: var(--ice); flex: 1; line-height: 1.5; }
+.voice-banner-text strong { color: var(--sky); }
+.voice-banner-btn {
+  background: var(--sky); border: none; border-radius: 6px;
+  padding: 6px 12px; font-size: 12px; color: white;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  white-space: nowrap; transition: opacity 0.15s;
+  text-decoration: none; display: inline-block;
+}
+.voice-banner-btn:hover { opacity: 0.85; }
+.voice-banner-btn.secondary {
+  background: transparent; border: 1px solid var(--border2);
+  color: var(--sub);
+}
+.voice-banner-btn.secondary:hover { border-color: var(--sky); color: var(--sky); }
+.voice-banner-close {
+  background: none; border: none; color: var(--sub);
+  cursor: pointer; font-size: 16px; padding: 0 4px;
+  line-height: 1; transition: color 0.15s;
+}
+.voice-banner-close:hover { color: var(--white); }
+
+.chat-topbar {
+  padding: 14px 20px;
+  background: var(--navy2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.chat-topbar-title {
+  font-size: 15px; font-weight: 600; color: var(--white);
+}
+.chat-topbar-sub { font-size: 12px; color: var(--sub); }
+.topbar-actions { display: flex; gap: 8px; }
+.topbar-btn {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px; color: var(--sub);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+.topbar-btn:hover { border-color: var(--sky); color: var(--sky); }
+
+.messages {
+  flex: 1; overflow-y: auto;
+  padding: 20px 24px;
+  display: flex; flex-direction: column; gap: 12px;
+  scroll-behavior: smooth;
+}
+.messages::-webkit-scrollbar { width: 3px; }
+.messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.msg { display: flex; gap: 10px; animation: msg-in 0.2s ease; }
+.msg.user { flex-direction: row-reverse; }
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+.avatar.vic {
+  background: linear-gradient(135deg, var(--sky), var(--mint));
+  color: white; font-family: 'DM Serif Display', serif;
+}
+.avatar.user { background: var(--blue); color: var(--ice); }
+
+.bubble {
+  max-width: 68%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13.5px; line-height: 1.55;
+}
+.msg.vic .bubble {
+  background: var(--card2); border: 1px solid var(--border);
+  color: var(--white); border-top-left-radius: 4px;
+}
+.msg.user .bubble {
+  background: var(--blue); color: var(--ice);
+  border-top-right-radius: 4px;
+}
+/* Voice input — slightly warmer teal tint */
+.msg.user.via-voice .bubble {
+  background: #0E3D5C;
+  border-left: 3px solid var(--mint);
+}
+/* Typed input — standard blue with subtle indicator */
+.msg.user.via-text .bubble {
+  background: var(--blue);
+  border-left: 3px solid var(--sky);
+}
+.msg-meta { font-size: 10px; color: var(--sub); margin-top: 3px; padding: 0 4px; }
+.msg.user .msg-meta { text-align: right; }
+
+/* CRM action pill */
+.action-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(0,201,167,0.1);
+  border: 1px solid rgba(0,201,167,0.25);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px; color: var(--mint);
+  margin-top: 6px;
+}
+
+.thinking-bubble {
+  display: flex; gap: 4px; align-items: center;
+  padding: 12px 14px;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 14px; border-top-left-radius: 4px;
+  width: fit-content;
+}
+.thinking-bubble span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--sky);
+  animation: bounce 1.2s infinite;
+}
+.thinking-bubble span:nth-child(2) { animation-delay: 0.15s; }
+.thinking-bubble span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce {
+  0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ─── LIVE TRANSCRIPT ─── */
+.transcript-bar {
+  padding: 8px 20px;
+  background: rgba(47,128,237,0.06);
+  border-top: 1px solid rgba(47,128,237,0.15);
+  font-size: 13px; color: var(--sky);
+  font-style: italic; display: none;
+  flex-shrink: 0;
+}
+.transcript-bar.active { display: block; }
+
+/* ─── SUGGESTIONS ─── */
+.suggestions {
+  padding: 6px 16px 8px;
+  display: flex; gap: 6px;
+  overflow-x: auto; flex-shrink: 0;
+  scrollbar-width: none;
+}
+.suggestions::-webkit-scrollbar { display: none; }
+.chip {
+  background: var(--card2); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 12px; color: var(--sub);
+  cursor: pointer; transition: all 0.15s;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--sky); color: var(--sky); background: rgba(47,128,237,0.06); }
+
+/* ─── INPUT AREA ─── */
+.input-area {
+  background: var(--navy2);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  padding: 14px 16px 16px;
+}
+
+/* Main control row — mic + input + send all in one line */
+.input-row {
+  display: flex; align-items: flex-end; gap: 10px;
+}
+
+/* BIG MIC BUTTON — primary control */
+.mic-btn {
+  width: 56px; height: 56px; border-radius: 16px;
+  border: none; cursor: pointer; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2px;
+  transition: all 0.2s; font-size: 22px;
+  background: var(--card2);
+  border: 1.5px solid var(--border2);
+  position: relative;
+}
+.mic-btn:hover { border-color: var(--sky); background: rgba(47,128,237,0.1); transform: scale(1.04); }
+.mic-btn:active { transform: scale(0.96); }
+.mic-btn .mic-label-sm {
+  font-size: 9px; font-family: 'DM Sans', sans-serif;
+  color: var(--sub); letter-spacing: 0.5px; line-height: 1;
+  text-transform: uppercase;
+}
+.mic-btn.active {
+  background: rgba(0,201,167,0.1);
+  border-color: var(--mint);
+}
+.mic-btn.active .mic-label-sm { color: var(--mint); }
+.mic-btn.listening {
+  background: rgba(231,76,60,0.12);
+  border-color: var(--red);
+  animation: mic-ring 0.9s infinite;
+}
+.mic-btn.listening .mic-label-sm { color: var(--red); }
+
+@keyframes mic-ring {
+  0%,100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.25); }
+  50%      { box-shadow: 0 0 0 10px rgba(231,76,60,0); }
+}
+
+/* TEXT INPUT */
+.text-input {
+  flex: 1;
+  background: var(--card2); border: 1.5px solid var(--border2);
+  border-radius: 16px; padding: 12px 18px;
+  font-size: 15px; color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  outline: none; transition: border-color 0.2s;
+  resize: none; line-height: 1.5;
+  max-height: 120px; overflow-y: auto;
+  min-height: 56px;
+}
+.text-input::placeholder { color: var(--sub); }
+.text-input:focus { border-color: var(--sky); }
+
+/* SEND BUTTON */
+/* send button removed — Enter key sends */
+
+/* MUTE BUTTON */
+.mute-btn {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: rgba(231,76,60,0.15);
+  border: 2px solid var(--red);
+  cursor: pointer; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2px;
+  transition: all 0.2s; color: var(--red);
+  font-size: 22px;
+}
+.mute-btn .mute-label {
+  font-size: 9px; font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  line-height: 1; color: var(--red);
+}
+.mute-btn:hover { background: rgba(231,76,60,0.25); transform: scale(1.04); }
+.mute-btn:active { transform: scale(0.96); }
+.mute-btn.muted {
+  background: var(--red);
+  color: white;
+}
+.mute-btn.muted .mute-label { color: white; }
+
+/* BOTTOM BAR — waveform + transcript + toggles */
+.mode-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding-top: 10px;
+}
+
+.transcript-inline {
+  font-size: 12.5px; color: var(--sky);
+  font-style: italic; flex: 1;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0;
+}
+
+/* Small toggles — right side */
+.toggle-btn {
+  background: var(--card2); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 11.5px; color: var(--sub);
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.toggle-btn:hover { border-color: var(--sky); color: var(--sky); }
+.toggle-btn.on { border-color: rgba(0,201,167,0.4); color: var(--mint); background: rgba(0,201,167,0.06); }
+
+/* File attach */
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--card2); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+  color: var(--sub);
+}
+.icon-btn:hover { border-color: var(--gold); color: var(--gold); }
+.file-input { display: none; }
+
+/* ─── CRM SIDE PANEL ─── */
+.crm-panel {
+  width: 260px; flex-shrink: 0;
+  background: var(--navy2);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.crm-panel-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--sub);
+}
+.crm-scroll { flex: 1; overflow-y: auto; }
+.crm-scroll::-webkit-scrollbar { width: 3px; }
+.crm-scroll::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.crm-section { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.crm-sec-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.crm-sec-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--sub);
+}
+.crm-sec-count {
+  background: var(--border2); color: var(--sub);
+  font-size: 10px; padding: 1px 6px; border-radius: 8px;
+}
+.crm-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 11px;
+  margin-bottom: 6px;
+  animation: card-in 0.25s ease;
+  cursor: default;
+  transition: border-color 0.15s;
+}
+.crm-card:hover { border-color: var(--border2); }
+@keyframes card-in {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.crm-card-name { font-size: 12.5px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+.crm-card-detail { font-size: 11px; color: var(--sub); line-height: 1.5; }
+.crm-card-value { font-size: 12px; color: var(--mint); font-weight: 600; }
+
+.stage-badge {
+  display: inline-block; padding: 2px 7px;
+  border-radius: 10px; font-size: 10px; font-weight: 600;
+  margin-top: 4px;
+}
+/* stage badge colors now applied dynamically via inline styles */
+
+.crm-empty { font-size: 11px; color: var(--sub); font-style: italic; padding: 2px 0; }
+
+/* ─── PIPELINE VIEW ─── */
+.pipeline-view {
+  padding: 24px; overflow-y: auto; gap: 20px;
+}
+.pipeline-view::-webkit-scrollbar { width: 4px; }
+.pipeline-view::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.view-header {
+  margin-bottom: 20px;
+}
+.view-header h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 24px; color: var(--white); margin-bottom: 4px;
+}
+.view-header p { font-size: 13px; color: var(--sub); }
+
+.pipeline-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px;
+}
+.stat-val {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px; color: var(--sky);
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 11px; color: var(--sub); }
+
+.opp-table {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+.opp-table-header {
+  display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr;
+  padding: 10px 16px;
+  background: var(--navy3);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--sub); border-bottom: 1px solid var(--border);
+}
+.opp-row {
+  display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  font-size: 13px; align-items: center;
+  transition: background 0.1s;
+}
+.opp-row:last-child { border-bottom: none; }
+.opp-row:hover { background: rgba(47,128,237,0.04); }
+.opp-name { font-weight: 600; color: var(--white); }
+.opp-company { color: var(--sub); }
+
+/* ─── CONTACTS VIEW ─── */
+.contacts-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px; margin-top: 8px;
+}
+.contact-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px;
+  transition: border-color 0.15s;
+}
+.contact-card:hover { border-color: var(--border2); }
+.contact-avatar-lg {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--sky));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; color: white;
+  margin-bottom: 10px;
+}
+.contact-name { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+.contact-title { font-size: 12px; color: var(--sub); }
+.contact-company { font-size: 12px; color: var(--sky); margin-top: 2px; }
+
+/* ─── REPORT MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8,15,30,0.9);
+  display: none; align-items: center; justify-content: center;
+  z-index: 500; backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 14px; padding: 28px 32px;
+  width: 540px; max-width: 95vw;
+  max-height: 80vh; overflow-y: auto;
+}
+.modal-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px; color: var(--white);
+  margin-bottom: 6px;
+}
+.modal-sub { font-size: 12px; color: var(--sub); margin-bottom: 20px; }
+.modal-content { font-size: 13.5px; color: var(--ice); line-height: 1.7; white-space: pre-wrap; }
+.modal-close {
+  width: 100%; margin-top: 20px;
+  background: var(--navy3); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 10px;
+  color: var(--sub); font-size: 13px; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.15s;
+}
+.modal-close:hover { border-color: var(--sky); color: var(--sky); }
+
+/* ─── WAVEFORM ─── */
+.waveform {
+  display: none; align-items: center; gap: 2px;
+  height: 20px; padding: 0 4px;
+}
+.waveform.active { display: flex; }
+.wave-bar {
+  width: 3px; border-radius: 2px;
+  background: var(--red);
+  animation: wave-anim 0.6s infinite ease-in-out;
+}
+.wave-bar:nth-child(1) { animation-delay: 0s; }
+.wave-bar:nth-child(2) { animation-delay: 0.08s; }
+.wave-bar:nth-child(3) { animation-delay: 0.16s; }
+.wave-bar:nth-child(4) { animation-delay: 0.24s; }
+.wave-bar:nth-child(5) { animation-delay: 0.16s; }
+.wave-bar:nth-child(6) { animation-delay: 0.08s; }
+.wave-bar:nth-child(7) { animation-delay: 0s; }
+@keyframes wave-anim {
+  0%,100% { height: 4px; }
+  50% { height: 16px; }
+}
+
+/* ─── TOAST ─── */
+.toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px);
+  background: var(--card2); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 10px 20px;
+  font-size: 13px; color: var(--mint);
+  transition: transform 0.3s ease; z-index: 999;
+  pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Scrollbars */
+.pipeline-view::-webkit-scrollbar { width: 4px; }
+.pipeline-view::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- SETUP MODAL -->
+<div class="setup-overlay" id="setupOverlay">
+  <div class="setup-box">
+    <div class="setup-logo">
+      <div class="setup-logomark">V</div>
+      <div>
+        <div class="setup-title">VIC CRM</div>
+        <div class="setup-sub">Voice Intelligent CRM Insight</div>
+      </div>
+    </div>
+    <p class="setup-desc">
+      Enter your Anthropic API key to activate VIC — your conversational AI sales assistant.
+      VIC listens, understands natural speech, and keeps your CRM updated automatically.
+    </p>
+    <div class="setup-label">Anthropic API Key</div>
+    <input class="setup-input" type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+    <div class="setup-hint">
+      Get your key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>.
+      Your key stays in this browser only — never sent anywhere else.
+    </div>
+    <button class="setup-btn" onclick="startApp()">Launch VIC CRM →</button>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal-box">
+    <div class="modal-title">📊 Pipeline Report</div>
+    <div class="modal-sub" id="reportDate"></div>
+    <div class="modal-content" id="reportContent"></div>
+    <button class="modal-close" onclick="closeReport()">Close</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- APP -->
+<div class="app" id="app" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-row">
+        <div class="logomark">V</div>
+        <div class="logo-name">VIC CRM</div>
+      </div>
+      <div class="logo-tagline">Voice Intelligent CRM Insight</div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Workspace</div>
+      <div class="nav-item active" onclick="showView('chat')">
+        <span class="nav-icon">💬</span> VIC Chat
+      </div>
+      <div class="nav-item" onclick="showView('pipeline')">
+        <span class="nav-icon">📈</span> Pipeline
+        <span class="nav-count" id="nav-opp-count">0</span>
+      </div>
+      <div class="nav-item" onclick="showView('contacts')">
+        <span class="nav-icon">👥</span> Contacts
+        <span class="nav-count" id="nav-con-count">0</span>
+      </div>
+      <div class="nav-section-label" style="margin-top:8px;">Tools</div>
+      <div class="nav-item" onclick="generateReport()">
+        <span class="nav-icon">📋</span> Pipeline Report
+      </div>
+      <div class="nav-item" onclick="clearAll()">
+        <span class="nav-icon">🗑</span> Clear Data
+      </div>
+      <div class="nav-item" onclick="changeApiKey()">
+        <span class="nav-icon">🔑</span> API Key
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="vic-status">
+        <div class="vic-dot" id="vicDot"></div>
+        <div class="vic-status-text" id="vicStatusText">VIC ready</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- CHAT VIEW -->
+    <div class="view active chat-view" id="view-chat">
+      <div class="chat-main">
+        <div class="chat-topbar">
+          <div>
+            <div class="chat-topbar-title">VIC — Your Sales Assistant</div>
+            <div class="chat-topbar-sub" id="inputModeSub">Type or speak · VIC handles the rest</div>
+          </div>
+          <div class="topbar-actions">
+            <button class="topbar-btn" id="ttsToggleBtn" onclick="toggleTTS()">🔊 VIC Voice: ON</button>
+            <button class="topbar-btn" onclick="generateReport()">📋 Report</button>
+            <button class="topbar-btn" onclick="clearChat()">Clear Chat</button>
+          </div>
+        </div>
+
+        <!-- Voice setup banner — shown only when voice won't work -->
+        <div class="voice-banner" id="voiceBanner">
+          <span style="font-size:20px;">🎤</span>
+          <div class="voice-banner-text">
+            <strong>Voice needs one quick step.</strong>
+            Chrome blocks the mic on local files — open VIC CRM from a server instead.
+            <span id="bannerDetail"></span>
+          </div>
+          <a class="voice-banner-btn" id="bannerFixBtn" href="#" onclick="return bannerFix()">Fix it</a>
+          <a class="voice-banner-btn secondary" href="https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb" target="_blank">Extension</a>
+          <button class="voice-banner-close" onclick="dismissBanner()" title="Dismiss">×</button>
+        </div>
+
+        <div class="messages" id="messages"></div>
+
+        <div class="suggestions" id="suggestions">
+          <span class="chip" onclick="useChip(this)">We're going after the Tucson courthouse, ballistic glazing, about two million</span>
+          <span class="chip" onclick="useChip(this)">They're in bid phase on that hospital job</span>
+          <span class="chip" onclick="useChip(this)">Met Jane Torres, she's PM at Southwest Glass</span>
+          <span class="chip" onclick="useChip(this)">What does my pipeline look like?</span>
+          <span class="chip" onclick="useChip(this)">Move the hospital deal to awarded</span>
+        </div>
+
+        <div class="input-area">
+          <div class="input-row">
+            <!-- MIC — toggle listening loop on/off. Text always works regardless. -->
+            <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+              <span id="micIcon" style="line-height:1">🎤</span>
+              <span class="mic-label-sm" id="micLabel">Listen</span>
+            </button>
+
+            <!-- TEXT INPUT -->
+            <textarea class="text-input" id="textInput" placeholder="Type and press Enter, or just speak" rows="1"
+              onkeydown="handleKey(event)" oninput="syncBaseText(this); autoResize(this)"></textarea>
+
+            <!-- MUTE — large red, easy to hit -->
+            <button class="mute-btn" id="muteBtn" onclick="toggleMute()" title="Mute VIC">
+              <span id="muteIcon" style="line-height:1">🔊</span>
+              <span class="mute-label" id="muteLabel">Mute</span>
+            </button>
+
+
+          </div>
+
+          <!-- BOTTOM BAR — live transcript + waveform + toggles -->
+          <div class="mode-bar">
+            <div class="waveform" id="waveform">
+              <div class="wave-bar"></div><div class="wave-bar"></div>
+              <div class="wave-bar"></div><div class="wave-bar"></div>
+              <div class="wave-bar"></div><div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+            </div>
+            <div class="transcript-inline" id="transcriptInline"></div>
+            <label class="icon-btn" title="Attach file" style="margin-left:auto">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+              <input class="file-input" type="file" id="fileInput" accept=".csv,.xlsx,.xls" onchange="handleFile(event)">
+            </label>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- CRM SIDE PANEL -->
+      <div class="crm-panel">
+        <div class="crm-panel-header">Live CRM Data</div>
+        <div class="crm-scroll">
+
+          <div class="crm-section">
+            <div class="crm-sec-hdr">
+              <div class="crm-sec-label">Opportunities</div>
+              <div class="crm-sec-count" id="opp-count">0</div>
+            </div>
+            <div id="opp-list"><div class="crm-empty">None yet — just start talking</div></div>
+          </div>
+
+          <div class="crm-section">
+            <div class="crm-sec-hdr">
+              <div class="crm-sec-label">Contacts</div>
+              <div class="crm-sec-count" id="con-count">0</div>
+            </div>
+            <div id="con-list"><div class="crm-empty">Mention someone by name</div></div>
+          </div>
+
+          <div class="crm-section">
+            <div class="crm-sec-hdr">
+              <div class="crm-sec-label">Leads</div>
+              <div class="crm-sec-count" id="lead-count">0</div>
+            </div>
+            <div id="lead-list"><div class="crm-empty">Companies VIC picks up</div></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- PIPELINE VIEW -->
+    <div class="view pipeline-view" id="view-pipeline">
+      <div class="view-header">
+        <h2>Pipeline</h2>
+        <p>All opportunities tracked by VIC</p>
+      </div>
+      <div class="pipeline-stats" id="pipeline-stats">
+        <div class="stat-card"><div class="stat-val" id="stat-total">$0</div><div class="stat-label">Total Pipeline</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-count">0</div><div class="stat-label">Opportunities</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-awarded">$0</div><div class="stat-label" id="stat-top-label">Top Stage</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-avg">$0</div><div class="stat-label">Avg Deal Size</div></div>
+      </div>
+      <div class="opp-table" id="opp-table">
+        <div class="opp-table-header">
+          <span>Opportunity</span><span>Company</span><span>Value</span><span>Stage</span>
+        </div>
+        <div id="opp-table-body"></div>
+      </div>
+    </div>
+
+    <!-- CONTACTS VIEW -->
+    <div class="view pipeline-view" id="view-contacts">
+      <div class="view-header">
+        <h2>Contacts</h2>
+        <p>Everyone VIC has captured from your conversations</p>
+      </div>
+      <div class="contacts-grid" id="contacts-grid"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let API_KEY = '';
+let state = {
+  opportunities: [],
+  contacts: [],
+  leads: [],
+  messages: [],
+  thinking: false,
+  listening: false,
+  config: {
+    stages: [],           // canonical stage names defined by user
+    customFields: [],     // any custom fields the user defines
+    industry: '',
+    // terminology map: informal phrase → canonical stage/term
+    // e.g. { "good lead": "Qualified", "hot": "Qualified", "dead": "Closed Lost" }
+    termMap: {}
+  }
+};
+
+// ─── SETUP ───────────────────────────────────────────────────────────────────
+function startApp() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) {
+    document.getElementById('apiKeyInput').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('apiKeyInput').style.borderColor = '', 1500);
+    return;
+  }
+  API_KEY = key;
+  localStorage.setItem('viccrm_apikey', key);
+  unlockAudio();  // button click = user gesture
+  document.getElementById('setupOverlay').classList.add('hidden');
+  document.getElementById('app').style.display = 'flex';
+  init();
+}
+
+function changeApiKey() {
+  const current = localStorage.getItem('viccrm_apikey') || '';
+  const masked = current ? current.substring(0, 12) + '...' + current.slice(-4) : 'not set';
+  const newKey = prompt(`Current key: ${masked}\n\nPaste a new Anthropic API key to replace it, or cancel to keep current:`);
+  if (!newKey) return;
+  const trimmed = newKey.trim();
+  if (!trimmed) return;
+  API_KEY = trimmed;
+  localStorage.setItem('viccrm_apikey', trimmed);
+  toast('API key updated');
+}
+
+document.getElementById('apiKeyInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startApp();
+});
+
+// Auto-launch if API key is already saved — runs after full page load
+window.addEventListener('load', function() {
+  const saved = localStorage.getItem('viccrm_apikey');
+  if (saved && saved.length > 10) {
+    API_KEY = saved;
+    document.getElementById('apiKeyInput').value = saved;
+    document.getElementById('setupOverlay').classList.add('hidden');
+    document.getElementById('app').style.display = 'flex';
+    setTimeout(init, 200);
+  }
+});
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const items = document.querySelectorAll('.nav-item');
+  const map = { chat: 0, pipeline: 1, contacts: 2 };
+  if (map[name] !== undefined) items[map[name]].classList.add('active');
+  if (name === 'pipeline') renderPipelineView();
+  if (name === 'contacts') renderContactsView();
+}
+
+// ─── VOICE LOOP ──────────────────────────────────────────────────────────────
+// Fully automatic: listens → processes → VIC speaks → listens again. No buttons.
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let voiceActive = false;
+let vicSpeaking = false;
+let baseText = '';
+let interimText = '';
+let silenceTimer = null;
+const SILENCE_MS = 1400;
+let micRestarting = false;  // prevents double-start race condition
+
+if (SpeechRec) {
+  recognition = new SpeechRec();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    let newFinal = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) newFinal += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    if (newFinal) {
+      const space = baseText && !baseText.endsWith(' ') ? ' ' : '';
+      baseText += space + newFinal.trim();
+      interimText = '';
+    } else {
+      interimText = interim;
+    }
+    renderInputText();
+    clearTimeout(silenceTimer);
+    if (baseText.trim()) silenceTimer = setTimeout(autoSendVoice, SILENCE_MS);
+  };
+
+  recognition.onerror = (e) => {
+    // All errors just clear interim — onend handles restart
+    interimText = '';
+    clearTimeout(silenceTimer);
+    if (baseText.trim() && e.error === 'no-speech') autoSendVoice();
+  };
+
+  recognition.onend = () => {
+    state.listening = false;
+    micRestarting = false;
+    interimText = '';
+    renderInputText();
+    updateMicUI();
+    // Always restart if voice is on and VIC is not speaking
+    if (voiceActive && !vicSpeaking && !state.thinking) {
+      setTimeout(() => {
+        if (!voiceActive || vicSpeaking || state.thinking) return;
+        try {
+          recognition.start();
+          state.listening = true;
+          updateMicUI();
+        } catch(e) {
+          setTimeout(() => {
+            if (!voiceActive || vicSpeaking) return;
+            try { recognition.start(); state.listening = true; updateMicUI(); } catch(e2) {}
+          }, 200);
+        }
+      }, 50);
+    }
+  };
+}
+
+function scheduleRestart() {
+  if (!voiceActive || vicSpeaking || state.thinking || micRestarting) return;
+  micRestarting = true;
+  setTimeout(() => {
+    micRestarting = false;
+    if (!voiceActive || vicSpeaking || state.thinking) return;
+    try {
+      recognition.start();
+      state.listening = true;
+      updateMicUI();
+    } catch(ex) {
+      // Already started or other error — try once more after delay
+      setTimeout(() => {
+        if (!voiceActive || vicSpeaking || state.thinking) return;
+        try { recognition.start(); state.listening = true; updateMicUI(); } catch(e2) {}
+      }, 500);
+    }
+  }, 250);
+}
+
+// Called after silence — play a soft acknowledgment tone and send
+function autoSendVoice() {
+  clearTimeout(silenceTimer);
+  const text = baseText.trim();
+  if (!text || state.thinking) return;
+
+  // Play a brief soft "heard you" tone
+  playAck();
+
+  // Clear base and send
+  baseText = '';
+  interimText = '';
+  const input = document.getElementById('textInput');
+  if (input) { input.value = ''; input.style.height = 'auto'; }
+  hideTranscript();
+  sendMessage(text, 'voice');
+}
+
+// Short soft acknowledgment beep — lets user know VIC received the message
+function playAck() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(660, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.18);
+  } catch(e) {}
+}
+
+// Write interim text to transcript bar; base text into textarea
+function renderInputText() {
+  const input = document.getElementById('textInput');
+  if (!input) return;
+  if (input.value !== baseText) {
+    input.value = baseText;
+    autoResize(input);
+    input.selectionStart = input.selectionEnd = baseText.length;
+  }
+  showTranscript(interimText || (voiceActive && state.listening ? 'Listening...' : ''));
+}
+
+function updateMicUI() {
+  const btn = document.getElementById('micBtn');
+  const icon = document.getElementById('micIcon');
+  const label = document.getElementById('micLabel');
+  const waveform = document.getElementById('waveform');
+  if (!btn) return;
+
+  if (voiceActive) {
+    // Always red when voice is on — whether actively capturing or between utterances
+    btn.classList.add('listening');
+    btn.classList.remove('active');
+    if (icon) icon.textContent = '🔴';
+    if (label) label.textContent = interimText ? 'Hearing' : 'Ready';
+    if (waveform) waveform.classList.toggle('active', !!interimText || state.listening);
+  } else {
+    btn.classList.remove('active', 'listening');
+    if (icon) icon.textContent = '🎤';
+    if (label) label.textContent = 'Listen';
+    if (waveform) waveform.classList.remove('active');
+  }
+}
+
+function openMic() {
+  if (!recognition || !voiceActive || vicSpeaking || state.thinking) return;
+  try {
+    recognition.start();
+    state.listening = true;
+    updateMicUI();
+  } catch(e) {
+    state.listening = false;
+    updateMicUI();
+    // If already started, that's fine
+  }
+}
+
+function closeMic() {
+  state.listening = false;
+  interimText = '';
+  clearTimeout(silenceTimer);
+  updateMicUI();
+  hideTranscript();
+  try { recognition.stop(); } catch(e) {}
+}
+
+function toggleMic() {
+  unlockAudio();
+  if (!recognition) {
+    addMsg('vic', "Voice requires Chrome on localhost — text works great in the meantime.");
+    return;
+  }
+
+  if (!voiceActive) {
+    // Turn voice ON — force fresh start
+    voiceActive = true;
+    vicSpeaking = false;  // clear any stuck state
+    micRestarting = false;
+    state.thinking = false;
+    updateMicUI();
+    toast('Voice on');
+    // Force start recognition directly
+    setTimeout(() => {
+      try {
+        recognition.start();
+        state.listening = true;
+        updateMicUI();
+      } catch(e) {
+        // May already be running — that's fine
+        state.listening = true;
+        updateMicUI();
+      }
+    }, 100);
+  } else {
+    // Turn voice OFF
+    voiceActive = false;
+    closeMic();
+    setVicStatus('ready', 'VIC ready');
+    toast('Voice off');
+  }
+}
+
+function startVoiceLoop() {
+  if (!recognition) return;
+  voiceActive = true;
+  updateMicUI();
+  setTimeout(openMic, 1400);
+}
+
+function showTranscript(t) {
+  const el = document.getElementById('transcriptInline');
+  if (el) el.textContent = t ? '🎤 ' + t : '';
+}
+function hideTranscript() {
+  const el = document.getElementById('transcriptInline');
+  if (el) el.textContent = '';
+}
+
+// ─── VIC STATUS ───────────────────────────────────────────────────────────────
+function setVicStatus(mode, text) {
+  const dot = document.getElementById('vicDot');
+  const label = document.getElementById('vicStatusText');
+  dot.className = 'vic-dot' + (mode !== 'ready' ? ' ' + mode : '');
+  label.textContent = text;
+}
+
+// ─── TEXT TO SPEECH ──────────────────────────────────────────────────────────
+let ttsEnabled = true;   // always on
+let ttsVoice = null;
+let audioUnlocked = false;
+
+// Unlock audio on first user interaction — Chrome requires this
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  // Unlock Web Audio API
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = ctx.createBuffer(1, 1, 22050);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx.destination);
+    src.start(0);
+    setTimeout(() => ctx.close(), 500);
+  } catch(e) {}
+
+  // Warm up speechSynthesis — speak a real (but inaudible) utterance
+  if (window.speechSynthesis) {
+    const silent = new SpeechSynthesisUtterance(' ');
+    silent.volume = 0.001;
+    silent.rate = 10;  // very fast so it's done instantly
+    window.speechSynthesis.speak(silent);
+  }
+}
+
+function initTTS() {
+  function pickVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = ['Samantha','Karen','Daniel','Alex','Google US English','Google UK English Female','Microsoft Aria','Microsoft Jenny'];
+    for (const name of preferred) {
+      const v = voices.find(v => v.name.includes(name));
+      if (v) { ttsVoice = v; return; }
+    }
+    ttsVoice = voices.find(v => v.lang.startsWith('en')) || voices[0] || null;
+  }
+  pickVoice();
+  if (window.speechSynthesis.onvoiceschanged !== undefined)
+    window.speechSynthesis.onvoiceschanged = pickVoice;
+}
+
+// ── TTS via Google Translate audio (real MP3, plays like YouTube) ────────────
+// speechSynthesis is broken on this Mac — use fetch+AudioContext instead
+
+let vicAudio = null; // current playing audio element
+
+function speak(text, onDone) {
+  const clean = text.replace(/<[^>]*>/g, '').replace(/[\u2018\u2019]/g, "'").trim();
+
+  function done() {
+    if (!vicSpeaking) return;
+    vicSpeaking = false;
+    setVicStatus('ready', 'VIC ready');
+    if (onDone) onDone();
+    setTimeout(() => {
+      if (voiceActive && !state.thinking) {
+        try { recognition.start(); state.listening = true; updateMicUI(); } catch(e) {}
+      }
+    }, 300);
+  }
+
+  if (!ttsEnabled || !clean) {
+    if (onDone) onDone();
+    setTimeout(() => {
+      if (voiceActive && !state.thinking && !vicSpeaking) {
+        try { recognition.start(); state.listening = true; updateMicUI(); } catch(e) {}
+      }
+    }, 300);
+    return;
+  }
+
+  vicSpeaking = true;
+  closeMic();
+  setVicStatus('thinking', 'VIC speaking...');
+
+  // Stop any current audio
+  if (vicAudio) { vicAudio.pause(); vicAudio = null; }
+
+  // Use speechSynthesis — Google TTS is CORS blocked from localhost
+  window.speechSynthesis.cancel();
+
+  const voices = window.speechSynthesis.getVoices();
+  ttsVoice = voices.find(v => ['Samantha','Karen','Daniel','Alex','Google US English'].some(n => v.name.includes(n)))
+           || voices.find(v => v.lang.startsWith('en')) || voices[0] || null;
+
+  const wordCount = clean.split(' ').length;
+  const watchdog = setTimeout(() => {
+    vicSpeaking = false;
+    setVicStatus('ready', 'VIC ready');
+    if (onDone) onDone();
+    setTimeout(() => {
+      if (voiceActive && !state.thinking && !vicSpeaking) {
+        try { recognition.start(); state.listening = true; updateMicUI(); } catch(e) {}
+      }
+    }, 1000);
+  }, Math.max(8000, wordCount * 700));
+
+  const utt = new SpeechSynthesisUtterance(clean);
+  if (ttsVoice) utt.voice = ttsVoice;
+  utt.rate = 1.0; utt.pitch = 1.0; utt.volume = 1.0;
+
+  utt.onstart = () => setVicStatus('thinking', 'VIC speaking...');
+  utt.onend = () => {
+    clearTimeout(watchdog);
+    vicSpeaking = false;
+    setVicStatus('ready', 'VIC ready');
+    if (onDone) onDone();
+    setTimeout(() => {
+      if (voiceActive && !state.thinking && !vicSpeaking) {
+        try { recognition.start(); state.listening = true; updateMicUI(); } catch(e) {}
+      }
+    }, 1000);
+  };
+  utt.onerror = (e) => {
+    clearTimeout(watchdog);
+    if (e.error !== 'canceled' && e.error !== 'interrupted') {
+      vicSpeaking = false;
+      setVicStatus('ready', 'VIC ready');
+      if (onDone) onDone();
+      setTimeout(() => {
+        if (voiceActive && !state.thinking && !vicSpeaking) {
+          try { recognition.start(); state.listening = true; updateMicUI(); } catch(e2) {}
+        }
+      }, 500);
+    }
+  };
+
+  setTimeout(() => window.speechSynthesis.speak(utt), 150);
+}
+
+function tryFallback(clean, onDone) {
+  vicSpeaking = true;
+  if (!window.speechSynthesis) {
+    vicSpeaking = false;
+    if (onDone) onDone();
+    setTimeout(() => {
+      if (voiceActive && !state.thinking) {
+        try { recognition.start(); state.listening = true; updateMicUI(); } catch(e) {}
+      }
+    }, 500);
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(clean);
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(v => v.lang.startsWith('en')) || voices[0];
+  if (v) utt.voice = v;
+  utt.rate = 1.0; utt.volume = 1.0;
+
+  function fallbackDone() {
+    vicSpeaking = false;
+    setVicStatus('ready', 'VIC ready');
+    if (onDone) onDone();
+    setTimeout(() => {
+      if (voiceActive && !state.thinking && !vicSpeaking) {
+        try { recognition.start(); state.listening = true; updateMicUI(); } catch(e) {}
+      }
+    }, 1000);
+  }
+
+  utt.onend = () => fallbackDone();
+  utt.onerror = () => fallbackDone();
+  const watchdog = setTimeout(() => fallbackDone(), Math.max(8000, clean.split(' ').length * 600));
+  utt.onend = () => { clearTimeout(watchdog); fallbackDone(); };
+  setTimeout(() => window.speechSynthesis.speak(utt), 100);
+}
+
+function toggleTTS() { /* TTS always on — use mute button instead */ }
+
+function toggleMute() {
+  ttsEnabled = !ttsEnabled;
+  const btn = document.getElementById('muteBtn');
+  const icon = document.getElementById('muteIcon');
+  const label = document.getElementById('muteLabel');
+  if (!ttsEnabled) {
+    // Muted
+    window.speechSynthesis.cancel();
+    vicSpeaking = false;
+    btn.classList.add('muted');
+    if (icon) icon.textContent = '🔇';
+    if (label) label.textContent = 'Muted';
+    // Reopen mic if voice mode is on
+    if (voiceActive && !state.thinking) setTimeout(openMic, 200);
+  } else {
+    // Unmuted
+    btn.classList.remove('muted');
+    if (icon) icon.textContent = '🔊';
+    if (label) label.textContent = 'Mute';
+    unlockAudio();
+  }
+}
+
+// ─── TEXT INPUT ───────────────────────────────────────────────────────────────
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendText();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// Keep baseText in sync when user manually edits the textarea
+function syncBaseText(el) {
+  baseText = el.value;
+  interimText = '';
+}
+
+function sendText() {
+  unlockAudio();
+  const el = document.getElementById('textInput');
+  const t = el.value.trim();
+  if (!t) return;
+  // Clear both the textarea and the voice base
+  el.value = '';
+  el.style.height = 'auto';
+  baseText = '';
+  interimText = '';
+  hideTranscript();
+  sendMessage(t, 'text');
+}
+function useChip(el) {
+  const text = el.textContent.trim();
+  sendMessage(text, 'text');
+}
+
+// ─── FILE UPLOAD ──────────────────────────────────────────────────────────────
+function handleFile(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const name = file.name;
+  sendMessage(`[File uploaded: ${name}] — Please acknowledge this file was received and ask me what I'd like to do with it.`);
+  e.target.value = '';
+}
+
+// ─── MESSAGING ───────────────────────────────────────────────────────────────
+function addMsg(role, content, actionLabel, source) {
+  // source = 'voice' | 'text' | 'chip' | undefined
+  const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  state.messages.push({ role, content, time: now });
+
+  const container = document.getElementById('messages');
+  const el = document.createElement('div');
+  let cls = 'msg ' + role;
+  if (role === 'user') cls += source === 'voice' ? ' via-voice' : ' via-text';
+  el.className = cls;
+
+  const initials = role === 'vic' ? 'V' : 'Me';
+  // Small source indicator for user messages
+  const srcIcon = role === 'user' ? (source === 'voice' ? ' <span style="font-size:9px;opacity:0.6;">🎤</span>' : ' <span style="font-size:9px;opacity:0.5;">⌨️</span>') : '';
+  let extra = '';
+  if (actionLabel) {
+    extra = `<div class="action-pill">✓ ${actionLabel}</div>`;
+  }
+  el.innerHTML = `
+    <div class="avatar ${role}">${initials}</div>
+    <div>
+      <div class="bubble">${content}${srcIcon}${extra}</div>
+      <div class="msg-meta">${now}</div>
+    </div>
+  `;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showThinking() {
+  const container = document.getElementById('messages');
+  const el = document.createElement('div');
+  el.className = 'msg vic'; el.id = 'thinking-msg';
+  el.innerHTML = `
+    <div class="avatar vic">V</div>
+    <div class="thinking-bubble"><span></span><span></span><span></span></div>
+  `;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+  setVicStatus('thinking', 'VIC thinking...');
+}
+function hideThinking() {
+  const el = document.getElementById('thinking-msg');
+  if (el) el.remove();
+  setVicStatus('ready', 'VIC ready');
+}
+
+// ─── API ──────────────────────────────────────────────────────────────────────
+async function sendMessage(text, source) {
+  if (state.thinking) return;
+  closeMic(); // stop listening while VIC thinks
+  baseText = ''; interimText = '';
+  if (text.startsWith('[File uploaded:')) {
+    addMsg('user', '📎 ' + text.replace(/^\[File uploaded: (.+?)\].*/, 'Uploaded file: $1'), null, 'text');
+  } else {
+    addMsg('user', text, null, source || 'text');
+  }
+  state.thinking = true;
+  showThinking();
+
+  const systemPrompt = `You are VIC — the conversational AI at the heart of VIC CRM. You are a voice-first CRM that learns your user's language, builds canonical terminology, and maps informal speech to meaningful CRM data — automatically, through conversation.
+
+PERSONALITY: Sharp, brief, warm. Like a smart colleague with perfect memory. Never robotic. Never ask for commands.
+
+CURRENT CRM STATE:
+${JSON.stringify({ opportunities: state.opportunities, contacts: state.contacts, leads: state.leads, config: state.config }, null, 2)}
+
+═══ TERMINOLOGY NORMALIZATION — CORE BEHAVIOR ═══
+
+You maintain two things:
+1. CANONICAL TERMS — the official stage/status names the user has defined (config.stages)
+2. TERM MAP — a mapping of informal phrases → canonical terms (config.termMap)
+
+HOW NORMALIZATION WORKS:
+- When a rep says something like "they're a good lead" or "this one's hot" or "they're interested":
+  → Check if it matches anything in config.termMap already
+  → If yes: silently use the mapped canonical term
+  → If no AND canonical stages exist: say something like "Got it — I'll log that as Qualified, sound right?" 
+    Then use map_term action to save the mapping for next time
+  → If no canonical stages exist yet: accept the phrase as-is, save it as a stage
+
+- When a rep explicitly defines terms ("my stages are...", "we call that Qualified when..."):
+  → Register the canonical term AND any synonyms they mention
+
+- NEVER change what the rep said in the UI — show their exact words AND the canonical mapping
+- Normalization is SILENT after the first confirmation — once mapped, just use it
+
+EXAMPLES:
+  Rep: "they're a good lead" → [Qualified not in termMap] → VIC: "Logging that as Qualified — want me to use that whenever someone's a good lead?" → if yes, map "good lead" → "Qualified"
+  Rep: "this one's dead" → [not mapped] → VIC: "Noted — should I always treat 'dead' as Closed Lost?" → map on confirm
+  Rep: "they're a good lead" (2nd time, already mapped) → silently use "Qualified", no confirmation needed
+
+OTHER RULES:
+1. 1-3 sentences max, natural speech
+2. Pipeline questions → spoken summary
+3. One clarifying question at a time
+4. Dollar value + project name → opportunity
+5. Company name in passing → lead
+6. Person name + role → contact
+
+ACTION TYPES:
+- create_opportunity
+- update_opportunity  
+- create_contact
+- create_lead
+- update_config      (add canonical stage, field, or setting)
+- map_term           (save a phrase→canonical mapping after confirmation)
+- none
+
+RESPOND ONLY in raw JSON (no markdown, no backticks):
+{
+  "message": "natural conversational response",
+  "action": {
+    "type": "create_opportunity|update_opportunity|create_contact|create_lead|update_config|map_term|none",
+    "label": "brief UI label",
+    "data": {}
+  }
+}
+
+Data shapes:
+create_opportunity:  { name, company, value (number), stage (use canonical if mapped, otherwise user's word) }
+update_opportunity:  { match, stage, value }
+create_contact:      { name, title, company }
+create_lead:         { name, source }
+update_config:       { type: "stage"|"field"|"setting", value: "canonical term", key: "optional" }
+map_term:            { phrase: "what the rep said", canonical: "the canonical stage/term it maps to" }
+none:                {}`;
+
+  // Keep only last 10 messages to prevent token limit errors
+  const recentMessages = state.messages.slice(0, -1).slice(-10);
+  const apiMessages = recentMessages.map(m => ({
+    role: m.role === 'vic' ? 'assistant' : 'user',
+    content: m.content
+  }));
+  apiMessages.push({ role: 'user', content: text });
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 400,
+        system: systemPrompt,
+        messages: apiMessages
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      hideThinking();
+      const errMsg = data.error.message || data.error.type || JSON.stringify(data.error);
+      console.error('Anthropic API error:', data.error);
+      addMsg('vic', `API error: ${errMsg}`);
+      speak(errMsg, () => { state.thinking = false; });
+      return;
+    }
+
+    const raw = data.content?.[0]?.text || '';
+    let parsed;
+    try {
+      const match = raw.match(/\{[\s\S]*\}/);
+      parsed = JSON.parse(match ? match[0] : raw);
+    } catch(e) {
+      parsed = { message: raw || "Something went wrong — try again.", action: { type: 'none', label: '', data: {} } };
+    }
+
+    hideThinking();
+    const action = parsed.action || { type: 'none', label: '', data: {} };
+    addMsg('vic', parsed.message, action.type !== 'none' ? action.label : null);
+    speak(parsed.message, () => { state.thinking = false; });
+
+    // Apply action
+    applyAction(action);
+
+  } catch(err) {
+    hideThinking();
+    const errMsg = "Couldn't reach the API — check your connection and try again.";
+    addMsg('vic', errMsg);
+    speak(errMsg, () => { state.thinking = false; });
+  }
+}
+
+function applyAction(action) {
+  if (!action || action.type === 'none') return;
+  const d = action.data;
+
+  if (action.type === 'create_opportunity' && d.name) {
+    const exists = state.opportunities.find(o => o.name.toLowerCase() === d.name.toLowerCase());
+    if (exists) Object.assign(exists, d);
+    else state.opportunities.unshift({ ...d, id: Date.now() });
+    // Auto-register any new stage
+    if (d.stage) registerStage(d.stage);
+    toast('Opportunity saved');
+  }
+  else if (action.type === 'update_opportunity' && d.match) {
+    const opp = state.opportunities.find(o =>
+      o.name.toLowerCase().includes(d.match.toLowerCase()) ||
+      (o.company || '').toLowerCase().includes(d.match.toLowerCase())
+    );
+    if (opp) { Object.assign(opp, d); toast('Opportunity updated'); }
+    else {
+      state.opportunities.unshift({ name: d.match, stage: d.stage || '', value: d.value || 0, id: Date.now() });
+      toast('Opportunity created');
+    }
+    if (d.stage) registerStage(d.stage);
+  }
+  else if (action.type === 'create_contact' && d.name) {
+    const exists = state.contacts.find(c => c.name.toLowerCase() === d.name.toLowerCase());
+    if (!exists) { state.contacts.unshift({ ...d, id: Date.now() }); toast('Contact saved'); }
+  }
+  else if (action.type === 'create_lead' && d.name) {
+    const exists = state.leads.find(l => l.name.toLowerCase() === d.name.toLowerCase());
+    if (!exists) { state.leads.unshift({ ...d, id: Date.now() }); toast('Lead captured'); }
+  }
+  else if (action.type === 'update_config' && d.value) {
+    if (d.type === 'stage') {
+      registerStage(d.value);
+      toast('Stage added: ' + d.value);
+    } else if (d.type === 'field') {
+      const exists = state.config.customFields.find(f => f.toLowerCase() === d.value.toLowerCase());
+      if (!exists) { state.config.customFields.push(d.value); toast('Field added: ' + d.value); }
+    } else if (d.type === 'setting' && d.key) {
+      state.config[d.key] = d.value;
+      toast('Config updated');
+    }
+  }
+  else if (action.type === 'map_term' && d.phrase && d.canonical) {
+    // Save the phrase→canonical mapping (lowercase key for matching)
+    const key = d.phrase.toLowerCase().trim();
+    state.config.termMap[key] = d.canonical;
+    // Also make sure the canonical term is registered as a stage
+    registerStage(d.canonical);
+    toast('"' + d.phrase + '" → ' + d.canonical);
+  }
+
+  renderCRM();
+  renderTermMap();  // refresh config panel if visible
+  saveState();      // persist every CRM change immediately
+}
+
+// Register a stage name — deduplicated, preserves user's exact casing
+function registerStage(stageName) {
+  if (!stageName) return;
+  const already = state.config.stages.find(s => s.toLowerCase() === stageName.toLowerCase());
+  if (!already) state.config.stages.push(stageName);
+}
+
+// Render the terminology map in the CRM panel
+function renderTermMap() {
+  const el = document.getElementById('term-map-list');
+  if (!el) return;
+  const entries = Object.entries(state.config.termMap);
+  if (entries.length === 0) {
+    el.innerHTML = '<div class="crm-empty">None yet — VIC learns as you talk</div>';
+    return;
+  }
+  el.innerHTML = entries.map(([phrase, canonical]) => `
+    <div class="crm-card" style="display:flex;align-items:center;gap:6px;padding:7px 10px;">
+      <span style="font-size:11px;color:var(--sub);font-style:italic;flex:1">"${phrase}"</span>
+      <span style="font-size:10px;color:var(--sub);">→</span>
+      <span class="stage-badge" style="background:${stageStyle(canonical).bg};color:${stageStyle(canonical).color};margin:0">${canonical}</span>
+    </div>
+  `).join('');
+}
+
+// ─── CRM RENDER ───────────────────────────────────────────────────────────────
+// Dynamic stage colors — assign from a palette based on stage index, no hardcoding
+const STAGE_PALETTE = [
+  { bg: 'rgba(47,128,237,0.12)',   color: '#2F80ED' },   // blue
+  { bg: 'rgba(0,201,167,0.12)',    color: '#00C9A7' },   // mint
+  { bg: 'rgba(246,173,85,0.12)',   color: '#F6AD55' },   // gold
+  { bg: 'rgba(155,139,244,0.12)',  color: '#9B8BF4' },   // purple
+  { bg: 'rgba(231,76,60,0.12)',    color: '#E74C3C' },   // red
+  { bg: 'rgba(90,122,158,0.12)',   color: '#7A93B8' },   // slate
+  { bg: 'rgba(52,211,153,0.12)',   color: '#34D399' },   // green
+  { bg: 'rgba(251,191,36,0.12)',   color: '#FBbf24' },   // amber
+];
+
+function stageStyle(stage) {
+  if (!stage) return STAGE_PALETTE[5]; // slate for unknown
+  // Find index in known stages list for consistent color assignment
+  const idx = state.config.stages.findIndex(s => s.toLowerCase() === stage.toLowerCase());
+  const paletteIdx = idx >= 0 ? idx % STAGE_PALETTE.length : 5;
+  return STAGE_PALETTE[paletteIdx];
+}
+
+function stageBadgeHtml(stage) {
+  if (!stage) return '';
+  const style = stageStyle(stage);
+  return `<span class="stage-badge" style="background:${style.bg};color:${style.color}">${stage}</span>`;
+}
+
+function fmtVal(v) {
+  if (!v) return '';
+  return '$' + Number(v).toLocaleString();
+}
+
+function renderCRM() {
+  // Counts — null-safe
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setEl('opp-count', state.opportunities.length);
+  setEl('con-count', state.contacts.length);
+  setEl('lead-count', state.leads.length);
+  setEl('nav-opp-count', state.opportunities.length);
+  setEl('nav-con-count', state.contacts.length);
+  const termCount = Object.keys(state.config.termMap || {}).length;
+  setEl('term-count', termCount);
+  renderTermMap();
+
+  // Opportunities
+  const ol = document.getElementById('opp-list');
+  ol.innerHTML = state.opportunities.length === 0
+    ? '<div class="crm-empty">None yet — just start talking</div>'
+    : state.opportunities.map(o => `
+      <div class="crm-card">
+        <div class="crm-card-name">${o.name}</div>
+        <div class="crm-card-detail">${o.company || ''}${o.value ? ' &nbsp;·&nbsp; <span class="crm-card-value">' + fmtVal(o.value) + '</span>' : ''}</div>
+        ${stageBadgeHtml(o.stage)}
+      </div>`).join('');
+
+  // Contacts
+  const cl = document.getElementById('con-list');
+  cl.innerHTML = state.contacts.length === 0
+    ? '<div class="crm-empty">Mention someone by name</div>'
+    : state.contacts.map(c => `
+      <div class="crm-card">
+        <div class="crm-card-name">${c.name}</div>
+        <div class="crm-card-detail">${[c.title, c.company].filter(Boolean).join(' · ')}</div>
+      </div>`).join('');
+
+  // Leads
+  const ll = document.getElementById('lead-list');
+  ll.innerHTML = state.leads.length === 0
+    ? '<div class="crm-empty">Companies VIC picks up</div>'
+    : state.leads.map(l => `
+      <div class="crm-card">
+        <div class="crm-card-name">${l.name}</div>
+        <div class="crm-card-detail">${l.source || 'Mentioned in conversation'}</div>
+      </div>`).join('');
+}
+
+// ─── PIPELINE VIEW ────────────────────────────────────────────────────────────
+function renderPipelineView() {
+  const opps = state.opportunities;
+  const total = opps.reduce((s, o) => s + (Number(o.value) || 0), 0);
+  // Find the top stage by total value (dynamic — no hardcoded stage names)
+  const stageValues = {};
+  opps.forEach(o => {
+    if (o.stage) stageValues[o.stage] = (stageValues[o.stage] || 0) + (Number(o.value) || 0);
+  });
+  const topStage = Object.keys(stageValues).sort((a,b) => stageValues[b]-stageValues[a])[0] || null;
+  const awarded = topStage ? stageValues[topStage] : 0;
+  if (topStage) {
+    const lbl = document.getElementById('stat-top-label');
+    if (lbl) lbl.textContent = topStage;
+  }
+  const avg = opps.length ? total / opps.length : 0;
+
+  document.getElementById('stat-total').textContent = total ? '$' + (total >= 1000000 ? (total/1000000).toFixed(1) + 'M' : (total/1000).toFixed(0) + 'K') : '$0';
+  document.getElementById('stat-count').textContent = opps.length;
+  document.getElementById('stat-awarded').textContent = awarded ? '$' + (awarded >= 1000000 ? (awarded/1000000).toFixed(1) + 'M' : (awarded/1000).toFixed(0) + 'K') : '$0';
+  document.getElementById('stat-avg').textContent = avg ? '$' + (avg >= 1000000 ? (avg/1000000).toFixed(1) + 'M' : (avg/1000).toFixed(0) + 'K') : '$0';
+
+  const body = document.getElementById('opp-table-body');
+  if (opps.length === 0) {
+    body.innerHTML = '<div style="padding:20px;text-align:center;color:var(--sub);font-size:13px;">No opportunities yet — talk to VIC to get started</div>';
+  } else {
+    body.innerHTML = opps.map(o => `
+      <div class="opp-row">
+        <span class="opp-name">${o.name}</span>
+        <span class="opp-company">${o.company || '—'}</span>
+        <span>${o.value ? fmtVal(o.value) : '—'}</span>
+        <span>${stageBadgeHtml(o.stage)}</span>
+      </div>`).join('');
+  }
+}
+
+// ─── CONTACTS VIEW ────────────────────────────────────────────────────────────
+function renderContactsView() {
+  const grid = document.getElementById('contacts-grid');
+  if (state.contacts.length === 0) {
+    grid.innerHTML = '<div style="color:var(--sub);font-size:13px;font-style:italic;">No contacts yet — mention someone by name and VIC will capture them</div>';
+    return;
+  }
+  grid.innerHTML = state.contacts.map(c => {
+    const initials = c.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    return `<div class="contact-card">
+      <div class="contact-avatar-lg">${initials}</div>
+      <div class="contact-name">${c.name}</div>
+      ${c.title ? `<div class="contact-title">${c.title}</div>` : ''}
+      ${c.company ? `<div class="contact-company">${c.company}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ─── REPORT ───────────────────────────────────────────────────────────────────
+function generateReport() {
+  const opps = state.opportunities;
+  const total = opps.reduce((s, o) => s + (Number(o.value) || 0), 0);
+  const byStage = {};
+  opps.forEach(o => {
+    const s = o.stage || 'New';
+    if (!byStage[s]) byStage[s] = { count: 0, value: 0 };
+    byStage[s].count++;
+    byStage[s].value += Number(o.value) || 0;
+  });
+
+  let report = `PIPELINE SUMMARY\n${'─'.repeat(40)}\n\n`;
+  report += `Total Opportunities:  ${opps.length}\n`;
+  report += `Total Pipeline Value: ${fmtVal(total)}\n\n`;
+
+  if (Object.keys(byStage).length > 0) {
+    report += `BY STAGE\n${'─'.repeat(40)}\n`;
+    Object.entries(byStage).forEach(([stage, data]) => {
+      report += `${stage.padEnd(12)} ${String(data.count).padStart(3)} opp${data.count !== 1 ? 's' : ' '}   ${fmtVal(data.value)}\n`;
+    });
+  }
+
+  if (opps.length > 0) {
+    report += `\nOPPORTUNITIES\n${'─'.repeat(40)}\n`;
+    opps.forEach(o => {
+      report += `• ${o.name}${o.company ? ' (' + o.company + ')' : ''}\n`;
+      report += `  Stage: ${o.stage || 'New'}${o.value ? '  ·  Value: ' + fmtVal(o.value) : ''}\n`;
+    });
+  }
+
+  if (state.contacts.length > 0) {
+    report += `\nCONTACTS (${state.contacts.length})\n${'─'.repeat(40)}\n`;
+    state.contacts.forEach(c => {
+      report += `• ${c.name}${c.title ? ', ' + c.title : ''}${c.company ? ' — ' + c.company : ''}\n`;
+    });
+  }
+
+  if (state.leads.length > 0) {
+    report += `\nLEADS (${state.leads.length})\n${'─'.repeat(40)}\n`;
+    state.leads.forEach(l => { report += `• ${l.name}\n`; });
+  }
+
+  if (opps.length === 0 && state.contacts.length === 0) {
+    report += '\nNo CRM data yet. Talk to VIC to start building your pipeline.';
+  }
+
+  document.getElementById('reportContent').textContent = report;
+  document.getElementById('reportDate').textContent = 'Generated ' + new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('reportModal').classList.add('open');
+}
+function closeReport() { document.getElementById('reportModal').classList.remove('open'); }
+
+// ─── UTILITIES ───────────────────────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = '✓  ' + msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ─── PERSISTENCE ─────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'viccrm_state_v1';
+
+function saveState() {
+  try {
+    const toSave = {
+      opportunities: state.opportunities,
+      contacts:      state.contacts,
+      leads:         state.leads,
+      config:        state.config,
+      savedAt:       new Date().toISOString()
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+  } catch(e) {
+    console.warn('VIC CRM: could not save to localStorage', e);
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const saved = JSON.parse(raw);
+    state.opportunities = saved.opportunities || [];
+    state.contacts      = saved.contacts      || [];
+    state.leads         = saved.leads         || [];
+    state.config        = Object.assign({
+      stages: [], customFields: [], industry: '', termMap: {}
+    }, saved.config || {});
+    return saved.savedAt || true;
+  } catch(e) {
+    console.warn('VIC CRM: could not load from localStorage', e);
+    return false;
+  }
+}
+
+function clearAll() {
+  if (!confirm('Clear all CRM data? This cannot be undone.')) return;
+  state.opportunities = [];
+  state.contacts      = [];
+  state.leads         = [];
+  state.config        = { stages: [], customFields: [], industry: '', termMap: {} };
+  saveState();
+  renderCRM();
+  toast('CRM data cleared');
+}
+
+function clearChat() {
+  state.messages = [];
+  document.getElementById('messages').innerHTML = '';
+  addMsg('vic', "Fresh start. What's going on?");
+}
+
+// ─── VOICE SETUP DETECTION ───────────────────────────────────────────────────
+function checkVoiceSetup() {
+  const isFile    = window.location.protocol === 'file:';
+  const isChrome  = /Chrome/.test(navigator.userAgent) && !/Edg|OPR/.test(navigator.userAgent);
+  const hasSpeech = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+
+  if (!isChrome) {
+    showBanner(
+      'Voice requires Chrome. Text mode works great in any browser — or open this in Chrome for voice.',
+      null
+    );
+    return;
+  }
+  if (isFile) {
+    showBanner(
+      'Chrome blocks the mic on files opened directly. Click <strong>Fix it</strong> to copy a one-line command, or install the Extension (one-time setup).',
+      'file'
+    );
+    return;
+  }
+  // localhost or https — voice should work fine, no banner needed
+}
+
+function showBanner(detail, type) {
+  const banner = document.getElementById('voiceBanner');
+  const detailEl = document.getElementById('bannerDetail');
+  const fixBtn = document.getElementById('bannerFixBtn');
+  if (detailEl) detailEl.innerHTML = '';
+  if (banner) banner.classList.add('show');
+  if (type !== 'file' && fixBtn) fixBtn.style.display = 'none';
+  // Hide mic button since voice won't work
+  const micBtn = document.getElementById('micBtn');
+  if (micBtn) micBtn.style.opacity = '0.35';
+}
+
+function bannerFix() {
+  const cmd = 'cd ~/Dropbox && python3 -m http.server 8080';
+  navigator.clipboard.writeText(cmd).then(() => {
+    const btn = document.getElementById('bannerFixBtn');
+    if (btn) {
+      btn.textContent = '\u2713 Copied!';
+      btn.style.background = 'var(--mint)';
+      setTimeout(() => { btn.textContent = 'Fix it'; btn.style.background = ''; }, 2000);
+    }
+    addMsg('vic', 'Copied! Paste that into Terminal, press Enter, then reload this page.');
+  }).catch(() => {
+    addMsg('vic', 'In Terminal run: cd ~/Dropbox && python3 -m http.server 8080 — then reload this page.');
+  });
+  return false;
+}
+
+function dismissBanner() {
+  const banner = document.getElementById('voiceBanner');
+  if (banner) banner.classList.remove('show');
+  localStorage.setItem('viccrm_banner_dismissed', '1');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+function init() {
+  initTTS();
+  // Make sure mute button matches ttsEnabled state on load
+  const muteBtn = document.getElementById('muteBtn');
+  const muteIcon = document.getElementById('muteIcon');
+  const muteLabel = document.getElementById('muteLabel');
+  if (muteBtn) {
+    muteBtn.classList.remove('muted');
+    if (muteIcon) muteIcon.textContent = '🔊';
+    if (muteLabel) muteLabel.textContent = 'Mute';
+  }
+
+  const savedAt = loadState();
+  renderCRM();
+
+  let greeting;
+  if (savedAt) {
+    const when = new Date(savedAt);
+    const timeStr = when.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const oppCount = state.opportunities.length;
+    const summary = oppCount > 0
+      ? `You've got ${oppCount} opportunit${oppCount === 1 ? 'y' : 'ies'} in the pipeline.`
+      : "Pipeline's empty — ready when you are.";
+    greeting = `Hey, welcome back. Last session was ${timeStr}. ${summary} What's going on?`;
+  } else {
+    greeting = "Hey, I'm VIC. Tell me about a deal, drop a name, or ask about your pipeline. Just start talking.";
+  }
+
+  addMsg('vic', greeting);
+
+  // Check voice availability and show banner if needed
+  const dismissed = localStorage.getItem('viccrm_banner_dismissed');
+  if (!dismissed) checkVoiceSetup();
+
+  // Only auto-start voice loop if we're on a proper server (not file://)
+  const isFile = window.location.protocol === 'file:';
+  const isChrome = /Chrome/.test(navigator.userAgent) && !/Edg|OPR/.test(navigator.userAgent);
+  if (!isFile && isChrome) {
+    setTimeout(startVoiceLoop, 600);
+  }
+}
+</script>
+</body>
+</html>
