@@ -108,6 +108,8 @@ html, body {
 /* ─── LAYOUT ─── */
 .app {
   display: flex; height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ─── SIDEBAR ─── */
@@ -2183,6 +2185,15 @@ function dismissBanner() {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 function init() {
+  // Show iOS install prompt if not already installed and not dismissed
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone;
+  const iosDismissed = localStorage.getItem('iosBannerDismissed');
+  if (isIOS && !isStandalone && !iosDismissed) {
+    setTimeout(() => {
+      document.getElementById('iosInstallBanner').style.display = 'block';
+    }, 3000);
+  }
   initTTS();
   // Make sure mute button matches ttsEnabled state on load
   const muteBtn = document.getElementById('muteBtn');
