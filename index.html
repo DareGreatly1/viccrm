@@ -518,6 +518,102 @@ html, body {
   display: flex; flex-direction: column;
   overflow: hidden;
 }
+
+/* ─── MOBILE RESPONSIVE ─── */
+@media (max-width: 768px) {
+  /* Hide sidebar and CRM panel on mobile — show only chat */
+  .sidebar { display: none; }
+  .crm-panel { display: none; }
+
+  /* Full width chat */
+  .app { flex-direction: column; }
+  .main-area { width: 100%; }
+  .chat-view { flex-direction: column; }
+
+  /* Mobile topbar */
+  .topbar {
+    padding: 10px 12px;
+    position: relative;
+  }
+  .topbar-title { font-size: 15px; }
+  .topbar-sub { font-size: 11px; }
+  .topbar-actions { gap: 6px; }
+  .topbar-actions button { font-size: 11px; padding: 5px 10px; }
+
+  /* Mobile input area */
+  .input-area { padding: 10px 10px 12px; }
+  .input-row { gap: 8px; }
+
+  /* Smaller mic and mute buttons on mobile */
+  .mic-btn {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    font-size: 20px;
+  }
+  .mute-btn {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    font-size: 20px;
+  }
+
+  /* Full width text input */
+  .text-input {
+    font-size: 16px; /* prevents iOS zoom on focus */
+    min-height: 52px;
+    padding: 10px 14px;
+  }
+
+  /* Suggestions chips */
+  .suggestions { padding: 6px 10px 8px; }
+  .chip { font-size: 12px; padding: 6px 14px; }
+
+  /* Messages */
+  .messages { padding: 12px 10px; gap: 12px; }
+  .bubble { font-size: 14px; padding: 10px 14px; }
+
+  /* Mobile menu button — show sidebar as overlay */
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--sub);
+    font-size: 18px;
+    margin-right: 6px;
+  }
+
+  /* Mobile sidebar overlay */
+  .sidebar.mobile-open {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 1000;
+    width: 260px;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+
+  /* Overlay backdrop */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  .sidebar-overlay.active { display: block; }
+
+  /* Mode bar adjustments */
+  .mode-bar { padding-top: 8px; }
+  .transcript-inline { font-size: 12px; }
+}
+
+/* Hide mobile menu button on desktop */
+.mobile-menu-btn { display: none; }
 .crm-panel-header {
   padding: 14px 16px 10px;
   border-bottom: 1px solid var(--border);
@@ -1199,6 +1295,15 @@ function closeMic() {
   updateMicUI();
   hideTranscript();
   try { recognition.stop(); } catch(e) {}
+}
+
+function toggleMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar && overlay) {
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+  }
 }
 
 function toggleMic() {
