@@ -909,24 +909,12 @@ html, body {
             <div class="chat-topbar-sub" id="inputModeSub">Type or speak · VIC handles the rest</div>
           </div>
           <div class="topbar-actions">
-            <button class="topbar-btn" id="ttsToggleBtn" onclick="toggleTTS()">🔊 VIC Voice: ON</button>
-            <button class="topbar-btn" onclick="generateReport()">📋 Report</button>
+<button class="topbar-btn" onclick="generateReport()">📋 Report</button>
             <button class="topbar-btn" onclick="clearChat()">Clear Chat</button>
           </div>
         </div>
 
-        <!-- Voice setup banner — shown only when voice won't work -->
-        <div class="voice-banner" id="voiceBanner">
-          <span style="font-size:20px;">🎤</span>
-          <div class="voice-banner-text">
-            <strong>Voice needs one quick step.</strong>
-            Chrome blocks the mic on local files — open VIC CRM from a server instead.
-            <span id="bannerDetail"></span>
-          </div>
-          <a class="voice-banner-btn" id="bannerFixBtn" href="#" onclick="return bannerFix()">Fix it</a>
-          <a class="voice-banner-btn secondary" href="https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb" target="_blank">Extension</a>
-          <button class="voice-banner-close" onclick="dismissBanner()" title="Dismiss">×</button>
-        </div>
+
 
         <div class="messages" id="messages"></div>
 
